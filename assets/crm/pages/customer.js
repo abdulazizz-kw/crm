@@ -193,9 +193,17 @@
   });
   document.getElementById("customer").addEventListener("click", function (e) {
     var del = e.target.closest("[data-del-contact]");
-    if (del && confirm("Remove this contact?")) {
-      CRM.deleteContact(del.getAttribute("data-del-contact"));
-      render();
+    if (del) {
+      var contactId = del.getAttribute("data-del-contact");
+      UI.confirmAction({
+        title: "Remove " + CRM.contact(contactId).name + "?",
+        message: "The contact is removed from this customer.",
+        confirmLabel: "Remove",
+        onConfirm: function () {
+          CRM.deleteContact(contactId);
+          render();
+        },
+      });
     }
     if (e.target.closest("#add-contact")) {
       UI.formModal({
@@ -214,10 +222,16 @@
         },
       });
     }
-    if (e.target.closest("#delete-customer") && confirm("Delete this customer and all its contacts and deals? This can't be undone.")) {
-      CRM.deleteCompany(id);
-      location.href = "customers.html";
-    }
+    if (e.target.closest("#delete-customer"))
+      UI.confirmAction({
+        title: "Delete " + CRM.company(id).name + "?",
+        message: "This deletes the customer with all its contacts and deals. It can't be undone.",
+        confirmLabel: "Delete customer",
+        onConfirm: function () {
+          CRM.deleteCompany(id);
+          location.href = "customers.html";
+        },
+      });
     var tr = e.target.closest("tr[data-href]");
     if (tr) location.href = tr.getAttribute("data-href");
   });

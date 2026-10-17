@@ -549,12 +549,23 @@
       if (opts.onSubmit(data, form) !== false) modal.hide();
     });
     var del = el.querySelector("[data-delete]");
+    // Two-step delete inside the dialog: the first click asks, the second deletes.
     if (del)
       del.addEventListener("click", function () {
-        if (confirm(opts.deleteConfirm || "Delete this?")) {
+        if (del.getAttribute("data-armed")) {
           opts.onDelete();
           modal.hide();
+          return;
         }
+        del.setAttribute("data-armed", "1");
+        del.classList.replace("btn-outline-danger", "btn-danger");
+        del.textContent = "Yes, delete";
+        del.title = opts.deleteConfirm || "";
+        var hint = document.createElement("span");
+        hint.className = "crm-small text-danger me-auto";
+        hint.textContent = opts.deleteConfirm || "Delete this?";
+        del.classList.remove("me-auto");
+        del.insertAdjacentElement("afterend", hint);
       });
     el.addEventListener("shown.bs.modal", function () {
       var first = form.querySelector("input,select,textarea");
@@ -566,6 +577,51 @@
     if (opts.onMount) opts.onMount(form);
     modal.show();
     return form;
+  }
+
+  // In-page confirmation (browser confirm()/prompt() dialogs are blocked in some embeds).
+  // opts: { title, message, confirmLabel, typeToConfirm, onConfirm }
+  function confirmAction(opts) {
+    var old = document.getElementById("crm-confirm");
+    if (old) old.remove();
+    var html =
+      '<div class="modal fade" id="crm-confirm" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><form class="modal-content">' +
+      '<div class="modal-header"><h5 class="modal-title">' +
+      esc(opts.title || "Are you sure?") +
+      '</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>' +
+      '<div class="modal-body"><p class="mb-0">' +
+      esc(opts.message || "") +
+      "</p>" +
+      (opts.typeToConfirm
+        ? '<label class="form-label mt-3" for="crm-confirm-input">Type <b>' + esc(opts.typeToConfirm) + '</b> to confirm</label><input class="form-control" id="crm-confirm-input" autocomplete="off">'
+        : "") +
+      '</div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-danger" id="crm-confirm-yes">' +
+      esc(opts.confirmLabel || "Delete") +
+      "</button></div></form></div></div>";
+    document.body.insertAdjacentHTML("beforeend", html);
+    var el = document.getElementById("crm-confirm");
+    var modal = new bootstrap.Modal(el);
+    var input = document.getElementById("crm-confirm-input");
+    var yes = document.getElementById("crm-confirm-yes");
+    if (input) {
+      yes.disabled = true;
+      input.addEventListener("input", function () {
+        yes.disabled = input.value.trim() !== opts.typeToConfirm;
+      });
+    }
+    el.querySelector("form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (yes.disabled) return;
+      modal.hide();
+      opts.onConfirm();
+    });
+    el.addEventListener("shown.bs.modal", function () {
+      (input || yes).focus();
+    });
+    el.addEventListener("hidden.bs.modal", function () {
+      el.remove();
+    });
+    modal.show();
   }
 
   function memberOptions() {
@@ -796,6 +852,7 @@
     toInputDate: toInputDate,
     fromInputDate: fromInputDate,
     formModal: formModal,
+    confirmAction: confirmAction,
     memberOptions: memberOptions,
     companyOptions: companyOptions,
     openDealForm: openDealForm,

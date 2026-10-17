@@ -88,10 +88,16 @@
     }
     if (e.target.closest("#print")) window.print();
     if (e.target.closest("#edit")) InvoiceForm.open(inv);
-    if (e.target.closest("#delete") && confirm("Delete " + inv.number + "?")) {
-      CRM.deleteInvoice(id);
-      location.href = "invoices.html";
-    }
+    if (e.target.closest("#delete"))
+      UI.confirmAction({
+        title: "Delete " + inv.number + "?",
+        message: "The invoice is removed for good.",
+        confirmLabel: "Delete invoice",
+        onConfirm: function () {
+          CRM.deleteInvoice(id);
+          location.href = "invoices.html";
+        },
+      });
   });
   document.addEventListener("crm:data", render);
   render();

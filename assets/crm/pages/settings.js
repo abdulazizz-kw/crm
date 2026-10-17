@@ -115,10 +115,16 @@
     if (del) {
       var id = del.getAttribute("data-del");
       var name = CRM.state.workspaces[id].workspace.name;
-      if (prompt('This deletes "' + name + '" and everything in it. Type the workspace name to confirm.') === name) {
-        CRM.deleteWorkspace(id);
-        location.reload();
-      }
+      UI.confirmAction({
+        title: "Delete " + name + "?",
+        message: "This deletes the workspace and all its customers, deals, schedule and invoices.",
+        confirmLabel: "Delete workspace",
+        typeToConfirm: name,
+        onConfirm: function () {
+          CRM.deleteWorkspace(id);
+          location.reload();
+        },
+      });
     }
   });
   document.getElementById("ws-new").addEventListener("click", function () {
@@ -147,10 +153,15 @@
     reader.readAsText(file);
   });
   document.getElementById("reset").addEventListener("click", function () {
-    if (confirm("Replace the demo workspace with fresh sample data? Other workspaces aren't touched.")) {
-      CRM.resetDemo();
-      location.href = "index.html";
-    }
+    UI.confirmAction({
+      title: "Reset demo data?",
+      message: "This replaces the demo workspace with fresh sample data. Other workspaces aren't touched.",
+      confirmLabel: "Reset",
+      onConfirm: function () {
+        CRM.resetDemo();
+        location.href = "index.html";
+      },
+    });
   });
 
   fillWorkspace();
