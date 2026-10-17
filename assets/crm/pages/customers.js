@@ -41,10 +41,10 @@
       return s + r.won;
     }, 0);
     var items = [
-      { icon: "mdi-domain", tone: "bg-gradient-primary", label: "Customers", value: all.length },
-      { icon: "mdi-check-decagram", tone: "bg-gradient-success", label: "Active", value: count("active") },
-      { icon: "mdi-account-plus", tone: "bg-gradient-info", label: "Leads", value: count("lead") },
-      { icon: "mdi-cash-multiple", tone: "bg-gradient-danger", label: "Revenue won", value: UI.money(ltv, { whole: true }) },
+      { icon: "mdi-domain", tone: "bg-gradient-primary", label: "Customers", value: UI.count(all.length, "int") },
+      { icon: "mdi-check-decagram", tone: "bg-gradient-success", label: "Active", value: UI.count(count("active"), "int") },
+      { icon: "mdi-account-plus", tone: "bg-gradient-info", label: "Leads", value: UI.count(count("lead"), "int") },
+      { icon: "mdi-cash-multiple", tone: "bg-gradient-danger", label: "Revenue won", value: UI.count(ltv, "whole") },
     ];
     document.getElementById("cust-stats").innerHTML = items
       .map(function (i) {
@@ -56,7 +56,7 @@
           '"></i></span><div><div class="label">' +
           i.label +
           '</div><div class="value">' +
-          esc(i.value) +
+          i.value +
           "</div></div></div></div></div>"
         );
       })
@@ -167,7 +167,7 @@
   document.addEventListener("click", function (e) {
     if (e.target.closest("[data-add-first]")) UI.openCompanyForm();
     var tr = e.target.closest("tr[data-href]");
-    if (tr && !e.target.closest("a")) location.href = tr.getAttribute("data-href");
+    if (tr && !e.target.closest("a")) UI.go(tr.getAttribute("data-href"));
   });
   document.addEventListener("crm:company-added", function (e) {
     location.href = "customer.html?id=" + e.detail;

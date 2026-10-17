@@ -37,6 +37,7 @@
   }
 
   function render() {
+    var popIndex = 0;
     var end = CRM.addDays(start, 7);
     var last = CRM.addDays(start, 6);
     document.getElementById("range").textContent = UI.date(start.toISOString(), false) + " – " + UI.date(last.toISOString());
@@ -73,7 +74,9 @@
                 (e.done ? " done" : "") +
                 '" data-event="' +
                 e.id +
-                '" style="top:' +
+                '" style="--d:' +
+                Math.min(popIndex++, 20) * 35 +
+                "ms;top:" +
                 (top + i * 4) +
                 "px;height:" +
                 height +

@@ -98,12 +98,9 @@
     var b = e.target.closest("button");
     if (!b) return;
     var t = b.getAttribute("data-t");
-    CRM.setTheme(t);
-    document.documentElement.setAttribute("data-theme", t);
-    var icon = document.querySelector("#crm-theme-toggle i");
-    if (icon) icon.className = "mdi " + (t === "dark" ? "mdi-weather-sunny" : "mdi-weather-night");
-    fillTheme();
+    UI.switchTheme(t, e.clientX, e.clientY);
   });
+  document.addEventListener("crm:theme", fillTheme);
 
   document.getElementById("ws-list").addEventListener("click", function (e) {
     var sw = e.target.closest("[data-switch]");

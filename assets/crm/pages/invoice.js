@@ -35,7 +35,9 @@
       : null;
     var t = CRM.invoiceTotal(inv);
     root.innerHTML =
-      '<div class="crm-invoice"><div class="card"><div class="card-body">' +
+      '<div class="crm-invoice"><div class="card">' +
+      (inv.status === "paid" ? '<div class="crm-stamp" aria-hidden="true">PAID</div>' : "") +
+      '<div class="card-body">' +
       '<div class="d-flex justify-content-between flex-wrap gap-3 mb-5"><div><div class="crm-brand mb-2"><img src="assets/images/logo-mini.svg" alt=""><span>' +
       esc(w.workspace.name) +
       '</span></div><div class="crm-muted crm-small">' +
@@ -80,9 +82,17 @@
     var st = e.target.closest("[data-status]");
     if (st) {
       var status = st.getAttribute("data-status");
+      var before = inv.status;
       CRM.updateInvoice(id, { status: status });
       if (status === "paid") CRM.addActivity("note", inv.number + " was paid", { companyId: inv.companyId });
-      UI.toast(status === "paid" ? "Marked as paid" : "Marked as sent");
+      UI.toast(status === "paid" ? "Marked as paid" : "Marked as sent", "success", {
+        action: "Undo",
+        onAction: function () {
+          CRM.updateInvoice(id, { status: before });
+          render();
+          UI.renderNotifications();
+        },
+      });
       render();
       UI.renderNotifications();
     }

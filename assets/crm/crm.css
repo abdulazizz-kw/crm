@@ -627,72 +627,251 @@ body {
 
 .crm-toasts {
   position: fixed;
-  right: 20px;
-  bottom: 20px;
+  left: 50%;
+  bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
   z-index: 2000;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 8px;
+  pointer-events: none;
 }
 .crm-toast {
+  pointer-events: auto;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0.75rem 1rem;
-  border-radius: 10px;
-  background: var(--crm-panel);
-  color: var(--crm-text);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  border-left: 4px solid #1bcfb4;
-  font-size: 0.875rem;
-  animation: crm-in 0.25s ease;
+  padding: 0.55rem 0.6rem 0.55rem 1rem;
+  border-radius: 999px;
+  background: #1d1b19;
+  color: #f4f2ee;
+  box-shadow: 0 14px 34px rgba(20, 10, 40, 0.28);
+  font-size: 0.85rem;
+  white-space: nowrap;
+  max-width: calc(100vw - 32px);
+  animation: crm-toast-in 0.45s cubic-bezier(0.2, 0.9, 0.25, 1.15);
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
-.crm-toast i {
-  font-size: 1.2rem;
-  color: #1bcfb4;
+.crm-toast > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 0.4rem;
 }
-.crm-toast-warning {
-  border-left-color: #fe7096;
+.crm-toast i {
+  font-size: 1.05rem;
+  color: #6ee7c8;
 }
 .crm-toast-warning i {
-  color: #fe7096;
+  color: #ffb4c4;
+}
+.crm-toast-action {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.25rem 0.8rem;
+  background: linear-gradient(to right, #da8cff, #9a55ff);
+  color: #fff;
+  font-family: "ubuntu-medium", sans-serif;
+  font-size: 0.78rem;
+}
+.crm-toast-action:hover {
+  filter: brightness(1.08);
 }
 .crm-toast.out {
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateY(14px) scale(0.96);
 }
-@keyframes crm-in {
+@keyframes crm-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.9);
+  }
+}
+
+/* ---------- motion (driven by motion.js) ---------- */
+
+.crm-enter {
+  animation: crm-rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+.crm-enter-row {
+  animation: crm-rise-small 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes crm-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(6px);
+  }
+}
+@keyframes crm-rise-small {
   from {
     opacity: 0;
     transform: translateY(8px);
   }
 }
+.content-wrapper,
+.crm-auth .auth-form-light {
+  transition: opacity 0.17s ease, filter 0.17s ease, transform 0.17s ease;
+}
+.crm-leaving .content-wrapper {
+  opacity: 0;
+  filter: blur(6px);
+  transform: translateY(-6px);
+}
 
-/* ---------- page entrance ---------- */
+/* Sliding highlight behind the active sidebar item. */
+.crm-nav-pill {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  border-radius: 12px;
+  background: var(--crm-primary-soft);
+  z-index: 0;
+  pointer-events: none;
+}
+.sidebar > .nav > .nav-item {
+  position: relative;
+  z-index: 1;
+}
+.sidebar .nav .nav-item.active {
+  background: transparent !important;
+}
 
-.content-wrapper > * {
-  animation: crm-rise 0.35s ease both;
+/* Cards and buttons respond to the pointer. */
+.content-wrapper .card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.content-wrapper > *:nth-child(2) {
-  animation-delay: 0.04s;
+.content-wrapper .stretch-card > .card:hover,
+.content-wrapper .crm-mini-stat:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(154, 85, 255, 0.12);
 }
-.content-wrapper > *:nth-child(3) {
-  animation-delay: 0.08s;
+.btn {
+  transition: transform 0.12s ease, filter 0.2s ease, box-shadow 0.2s ease;
 }
-.content-wrapper > *:nth-child(4) {
-  animation-delay: 0.12s;
+.btn:active {
+  transform: scale(0.97);
 }
-@keyframes crm-rise {
+.crm-deal:hover {
+  transform: translateY(-2px);
+}
+.table tbody tr {
+  transition: background-color 0.2s ease;
+}
+.crm-seg button {
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+/* Dialogs: blurred backdrop, and a pop when not morphing from a card. */
+.modal-backdrop.show {
+  opacity: 1;
+  background: rgba(30, 20, 45, 0.28);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.modal.fade .modal-dialog {
+  transform: translateY(16px) scale(0.97);
+  transition: transform 0.35s cubic-bezier(0.2, 0.85, 0.25, 1);
+}
+.modal.show .modal-dialog {
+  transform: none;
+}
+.modal.crm-morph .modal-dialog {
+  transform: none !important;
+  transition: none;
+}
+.modal.crm-morph:not(.crm-morphing) .modal-content {
+  opacity: 0;
+}
+.modal.crm-morph.fade {
+  transition: opacity 0.12s linear;
+}
+
+/* Schedule items pop into their slots. */
+.crm-event {
+  animation: crm-pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes crm-pop {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: scale(0.85);
   }
 }
+
+/* Invoice slides in like a sheet; the PAID stamp lands on it. */
+.crm-invoice.crm-enter {
+  animation-name: crm-sheet;
+}
+@keyframes crm-sheet {
+  from {
+    opacity: 0;
+    transform: translateX(48px);
+    filter: blur(8px);
+  }
+}
+.crm-invoice .card {
+  position: relative;
+  overflow: hidden;
+}
+.crm-stamp {
+  position: absolute;
+  right: 9%;
+  top: 34%;
+  border: 3px solid #1bcfb4;
+  color: #12a58f;
+  border-radius: 10px;
+  padding: 0.3rem 1.1rem;
+  font-family: "ubuntu-bold", sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: 0.18em;
+  transform: rotate(-12deg);
+  opacity: 0.85;
+  pointer-events: none;
+  animation: crm-stamp 0.55s cubic-bezier(0.3, 1.4, 0.4, 1) 0.35s both;
+}
+@keyframes crm-stamp {
+  from {
+    opacity: 0;
+    transform: rotate(-12deg) scale(2.4);
+  }
+}
+
+/* Confetti when a deal is won. */
+.crm-confetti {
+  position: fixed;
+  width: 8px;
+  height: 12px;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 3000;
+}
+
+/* Chart canvases fade up with their draw-in. */
+canvas {
+  animation: crm-fade 0.6s ease both;
+}
+@keyframes crm-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .content-wrapper > *,
-  .crm-toast {
-    animation: none;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
@@ -919,4 +1098,9 @@ body {
 .crm-start .step b {
   display: block;
   margin-bottom: 0.25rem;
+}
+
+[data-theme="dark"] .crm-toast {
+  background: #2c2a27;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }

@@ -20,10 +20,10 @@
       }).length;
     };
     var cards = [
-      { tone: "bg-gradient-success", icon: "mdi-check-circle-outline", label: "Paid", value: UI.money(sum(["paid"]), { whole: true }), sub: cnt("paid") + " invoices" },
-      { tone: "bg-gradient-info", icon: "mdi-send", label: "Waiting for payment", value: UI.money(sum(["sent"]), { whole: true }), sub: cnt("sent") + " sent" },
-      { tone: "bg-gradient-danger", icon: "mdi-alert-outline", label: "Overdue", value: UI.money(sum(["overdue"]), { whole: true }), sub: cnt("overdue") + " overdue" },
-      { tone: "bg-gradient-primary", icon: "mdi-pencil", label: "Drafts", value: UI.money(sum(["draft"]), { whole: true }), sub: cnt("draft") + " not sent yet" },
+      { tone: "bg-gradient-success", icon: "mdi-check-circle-outline", label: "Paid", value: UI.count(sum(["paid"]), "whole"), sub: cnt("paid") + " invoices" },
+      { tone: "bg-gradient-info", icon: "mdi-send", label: "Waiting for payment", value: UI.count(sum(["sent"]), "whole"), sub: cnt("sent") + " sent" },
+      { tone: "bg-gradient-danger", icon: "mdi-alert-outline", label: "Overdue", value: UI.count(sum(["overdue"]), "whole"), sub: cnt("overdue") + " overdue" },
+      { tone: "bg-gradient-primary", icon: "mdi-pencil", label: "Drafts", value: UI.count(sum(["draft"]), "whole"), sub: cnt("draft") + " not sent yet" },
     ];
     document.getElementById("inv-stats").innerHTML = cards
       .map(function (c) {
@@ -35,7 +35,7 @@
           '"></i></span><div><div class="label">' +
           c.label +
           '</div><div class="value">' +
-          esc(c.value) +
+          c.value +
           '</div><div class="crm-muted crm-small">' +
           esc(c.sub) +
           "</div></div></div></div></div>"
@@ -114,7 +114,7 @@
   document.addEventListener("click", function (e) {
     if (e.target.closest("[data-new]")) InvoiceForm.open();
     var tr = e.target.closest("tr[data-href]");
-    if (tr && !e.target.closest("a")) location.href = tr.getAttribute("data-href");
+    if (tr && !e.target.closest("a")) UI.go(tr.getAttribute("data-href"));
   });
   document.addEventListener("crm:data", render);
   render();

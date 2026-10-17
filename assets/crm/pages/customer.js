@@ -75,9 +75,9 @@
         .join("") +
       '</div></div><div class="d-flex gap-4 flex-wrap">' +
       [
-        ["Lifetime value", UI.money(won)],
-        ["Open deals", UI.money(open)],
-        ["Owed to you", UI.money(owed)],
+        ["Lifetime value", UI.count(won)],
+        ["Open deals", UI.count(open)],
+        ["Owed to you", UI.count(owed)],
       ]
         .map(function (s) {
           return '<div><div class="crm-muted crm-small">' + s[0] + '</div><div class="fs-5 fw-bold">' + s[1] + "</div></div>";
@@ -233,7 +233,7 @@
         },
       });
     var tr = e.target.closest("tr[data-href]");
-    if (tr) location.href = tr.getAttribute("data-href");
+    if (tr) UI.go(tr.getAttribute("data-href"));
   });
   document.getElementById("edit-customer").addEventListener("click", function () {
     UI.openCompanyForm(CRM.company(id));

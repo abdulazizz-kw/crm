@@ -133,14 +133,28 @@
           var ids = Array.prototype.map.call(evt.to.querySelectorAll(".crm-deal"), function (el) {
             return el.getAttribute("data-id");
           });
+          // Remember where the card came from so the move can be undone.
+          var fromIds = Array.prototype.map.call(evt.from.querySelectorAll(".crm-deal"), function (el) {
+            return el.getAttribute("data-id");
+          });
+          if (to !== from) fromIds.splice(evt.oldIndex, 0, id);
           CRM.moveDeal(id, to, ids);
           var stage = CRM.byId(CRM.ws().stages, to);
-          if (to !== from) {
-            if (stage.kind === "won") UI.toast("Deal won! Create its invoice from the Invoices page.");
-            else UI.toast("Moved to " + stage.name);
-          }
           render();
           UI.renderNotifications();
+          if (to === from) return;
+          var landed = board.querySelector('.crm-deal[data-id="' + id + '"]');
+          if (stage.kind === "won" && landed) confetti(landed);
+          UI.toast(stage.kind === "won" ? "Deal won! Create its invoice from Invoices." : "Moved to " + stage.name, "success", {
+            action: "Undo",
+            onAction: function () {
+              CRM.moveDeal(id, from, fromIds);
+              render();
+              UI.renderNotifications();
+              var back = board.querySelector('.crm-deal[data-id="' + id + '"]');
+              if (back) back.animate([{ boxShadow: "0 0 0 3px rgba(154,85,255,.5)" }, { boxShadow: "0 0 0 0 rgba(154,85,255,0)" }], 900);
+            },
+          });
         },
       });
     });
@@ -159,6 +173,37 @@
     var el = e.target.closest(".crm-deal");
     if (el && e.key === "Enter") openDeal(el.getAttribute("data-id"));
   });
+
+  // A short burst of confetti from a card that just landed in Won.
+  function confetti(el) {
+    if (!el.animate || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var r = el.getBoundingClientRect();
+    var colors = ["#9a55ff", "#da8cff", "#1bcfb4", "#fed713", "#fe7096", "#047edf"];
+    for (var i = 0; i < 36; i++) {
+      var p = document.createElement("span");
+      p.className = "crm-confetti";
+      p.style.left = r.left + r.width / 2 + "px";
+      p.style.top = r.top + r.height / 3 + "px";
+      p.style.background = colors[i % colors.length];
+      document.body.appendChild(p);
+      var angle = Math.random() * Math.PI * 2;
+      var dist = 60 + Math.random() * 110;
+      var dx = Math.cos(angle) * dist;
+      var dy = Math.sin(angle) * dist - 60;
+      var spin = (Math.random() - 0.5) * 720;
+      p.animate(
+        [
+          { transform: "translate(-50%,-50%) rotate(0deg) scale(1)", opacity: 1 },
+          { transform: "translate(" + dx + "px," + dy + "px) rotate(" + spin / 2 + "deg) scale(1)", opacity: 1, offset: 0.55 },
+          { transform: "translate(" + dx * 1.15 + "px," + (dy + 140) + "px) rotate(" + spin + "deg) scale(.6)", opacity: 0 },
+        ],
+        { duration: 1100 + Math.random() * 500, easing: "cubic-bezier(.2,.7,.3,1)" },
+      ).onfinish = function () {
+        this.effect.target.remove();
+      };
+    }
+    el.animate([{ transform: "scale(1)" }, { transform: "scale(1.06)" }, { transform: "scale(1)" }], { duration: 450, easing: "ease-out" });
+  }
 
   // Deal detail: edit fields, see its history, log a note.
   function openDeal(id) {
@@ -182,7 +227,7 @@
             .join("")
         : '<li class="crm-muted ps-0">No history yet.</li>') +
       '</ul><div class="input-group mt-2"><input class="form-control" id="deal-note" placeholder="Add a note to this deal"><button class="btn btn-gradient-primary" type="button" id="deal-note-btn">Add</button></div></div>';
-    UI.openDealForm(d);
+    UI.openDealForm(d, { origin: document.getElementById("board").querySelector('.crm-deal[data-id="' + id + '"]') });
     var body = document.querySelector("#crm-modal .modal-body .row");
     body.insertAdjacentHTML("beforeend", extra);
     document.getElementById("deal-note-btn").addEventListener("click", function () {

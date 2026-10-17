@@ -64,10 +64,10 @@
     }).length;
 
     var cards = [
-      { tone: "bg-gradient-danger", icon: "mdi-chart-line", label: "Won this month", value: UI.money(m[1].total, { whole: true }), sub: pctChange(m[1].total, m[0].total) },
-      { tone: "bg-gradient-info", icon: "mdi-briefcase-outline", label: "Open pipeline", value: UI.money(openValue, { whole: true }), sub: open.length + " open deals" },
-      { tone: "bg-gradient-success", icon: "mdi-trophy-outline", label: "Win rate", value: winRate + "%", sub: won.length + " of " + closed.length + " closed in 90 days" },
-      { tone: "bg-gradient-primary", icon: "mdi-cash-multiple", label: "Awaiting payment", value: UI.money(unpaidTotal, { whole: true }), sub: overdue ? overdue + " invoice" + (overdue > 1 ? "s" : "") + " overdue" : "Nothing overdue" },
+      { tone: "bg-gradient-danger", icon: "mdi-chart-line", label: "Won this month", value: UI.count(m[1].total, "whole"), sub: pctChange(m[1].total, m[0].total) },
+      { tone: "bg-gradient-info", icon: "mdi-briefcase-outline", label: "Open pipeline", value: UI.count(openValue, "whole"), sub: open.length + " open deals" },
+      { tone: "bg-gradient-success", icon: "mdi-trophy-outline", label: "Win rate", value: UI.count(winRate, "pct"), sub: won.length + " of " + closed.length + " closed in 90 days" },
+      { tone: "bg-gradient-primary", icon: "mdi-cash-multiple", label: "Awaiting payment", value: UI.count(unpaidTotal, "whole"), sub: overdue ? overdue + " invoice" + (overdue > 1 ? "s" : "") + " overdue" : "Nothing overdue" },
     ];
     document.getElementById("stat-cards").innerHTML = cards
       .map(function (c) {
@@ -80,7 +80,7 @@
           ' <i class="mdi ' +
           c.icon +
           ' mdi-24px float-end"></i></h4><h2 class="mb-5">' +
-          esc(c.value) +
+          c.value +
           '</h2><h6 class="card-text">' +
           esc(c.sub) +
           "</h6></div></div></div>"
@@ -98,31 +98,71 @@
     var t = UI.chartTheme();
     var canvas = document.getElementById("revenue-chart");
     var ctx = canvas.getContext("2d");
-    var grad = ctx.createLinearGradient(0, 0, 0, 260);
-    grad.addColorStop(0, "rgba(218, 140, 255, 1)");
-    grad.addColorStop(1, "rgba(154, 85, 255, 1)");
+    var area = ctx.createLinearGradient(0, 0, 0, 280);
+    area.addColorStop(0, "rgba(154, 85, 255, 0.35)");
+    area.addColorStop(1, "rgba(154, 85, 255, 0)");
+    // Monthly target: the team's quarterly targets spread over three months.
+    var target =
+      CRM.ws().members.reduce(function (s, m) {
+        return s + (+m.target || 0);
+      }, 0) / 3;
     if (chart) chart.destroy();
     chart = new Chart(ctx, {
-      type: "bar",
+      type: "line",
       data: {
         labels: data.map(function (b) {
           return b.label;
         }),
-        datasets: [{ label: "Revenue won", data: data.map(function (b) { return b.total; }), backgroundColor: grad, hoverBackgroundColor: grad, borderWidth: 0 }],
+        datasets: [
+          {
+            label: "Revenue won",
+            data: data.map(function (b) {
+              return b.total;
+            }),
+            borderColor: "#9a55ff",
+            borderWidth: 2,
+            backgroundColor: area,
+            fill: true,
+            lineTension: 0.35,
+            pointRadius: 0,
+            pointHitRadius: 18,
+            pointHoverRadius: 5,
+            pointHoverBorderWidth: 2,
+            pointHoverBackgroundColor: "#9a55ff",
+            pointHoverBorderColor: t.surface,
+          },
+          {
+            label: "Monthly target",
+            data: data.map(function () {
+              return target;
+            }),
+            borderColor: t.text,
+            borderWidth: 1.5,
+            borderDash: [5, 5],
+            fill: false,
+            pointRadius: 0,
+            pointHitRadius: 0,
+            pointHoverRadius: 0,
+          },
+        ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        legend: { display: false },
+        animation: { duration: 1100, easing: "easeOutQuart" },
+        legend: { display: true, position: "top", labels: { fontColor: t.text, boxWidth: 12, usePointStyle: true } },
+        hover: { mode: "index", intersect: false },
         tooltips: {
+          mode: "index",
+          intersect: false,
           callbacks: {
-            label: function (item) {
-              return " " + UI.money(item.yLabel);
+            label: function (item, d) {
+              return " " + d.datasets[item.datasetIndex].label + ": " + UI.money(item.yLabel, { whole: true });
             },
           },
         },
         scales: {
-          xAxes: [{ gridLines: { display: false }, ticks: { fontColor: t.text }, barPercentage: 0.5, categoryPercentage: 0.7 }],
+          xAxes: [{ gridLines: { display: false }, ticks: { fontColor: t.text } }],
           yAxes: [
             {
               gridLines: { color: t.grid, zeroLineColor: t.grid, drawBorder: false },
@@ -138,6 +178,7 @@
           ],
         },
       },
+      plugins: [UI.crosshair],
     });
   }
 
@@ -371,7 +412,7 @@
   });
   document.addEventListener("click", function (e) {
     var tr = e.target.closest("tr[data-href]");
-    if (tr && !e.target.closest("a")) location.href = tr.getAttribute("data-href");
+    if (tr && !e.target.closest("a")) UI.go(tr.getAttribute("data-href"));
   });
   document.addEventListener("crm:data", render);
   document.addEventListener("crm:theme", revenueChart);

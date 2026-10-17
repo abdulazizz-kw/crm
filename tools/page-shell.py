@@ -17,7 +17,7 @@ if 'invoiceform' in extras:
     scripts.append('assets/crm/invoice-form.js')
 if 'sortable' in extras:
     scripts.append('assets/vendors/sortable/Sortable.min.js')
-scripts += ['assets/js/off-canvas.js', 'assets/js/hoverable-collapse.js', 'assets/js/misc.js', f'assets/crm/pages/{name}.js']
+scripts += ['assets/js/off-canvas.js', 'assets/js/hoverable-collapse.js', 'assets/js/misc.js', f'assets/crm/pages/{name}.js', 'assets/crm/motion.js']
 tags = "\n".join(f'    <script src="{s}"></script>' for s in scripts)
 
 html = f"""<!DOCTYPE html>

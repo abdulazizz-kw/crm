@@ -115,6 +115,7 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: { duration: 1100, easing: "easeOutQuart" },
         legend: { display: false },
         tooltips: {
           callbacks: {

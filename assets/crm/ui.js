@@ -145,9 +145,21 @@
     return '<span class="badge ' + (STATUS_BADGE[status] || "badge-gradient-secondary") + '">' + esc(label || cap(status)) + "</span>";
   }
 
+  // A number that counts up into place when it first appears (see motion.js).
+  function count(value, fmt) {
+    var text = fmt === "pct" ? Math.round(value) + "%" : fmt === "int" ? String(Math.round(value)) : money(value, { whole: fmt === "whole" });
+    return '<span data-count="' + value + '" data-format="' + (fmt || "money") + '">' + esc(text) + "</span>";
+  }
+
   function cap(s) {
     s = String(s || "");
     return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  // Navigates with the page-leave transition when motion.js is loaded.
+  function go(href) {
+    if (window.CRMMotion) CRMMotion.leave(href);
+    else location.href = href;
   }
 
   function qs(name) {
@@ -288,16 +300,39 @@
 
   // ---------- navbar behaviour ----------
 
+  // Switches theme with a circular reveal from (x, y) where the browser supports view transitions.
+  function switchTheme(next, x, y) {
+    function apply() {
+      CRM.setTheme(next);
+      document.documentElement.setAttribute("data-theme", next);
+      var icon = document.querySelector("#crm-theme-toggle i");
+      if (icon) icon.className = "mdi " + (next === "dark" ? "mdi-weather-sunny" : "mdi-weather-night");
+      document.dispatchEvent(new Event("crm:theme"));
+    }
+    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!document.startViewTransition || reduce) {
+      apply();
+      return;
+    }
+    x = x == null ? innerWidth - 80 : x;
+    y = y == null ? 30 : y;
+    var r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    var t = document.startViewTransition(apply);
+    t.ready.then(function () {
+      document.documentElement.animate(
+        { clipPath: ["circle(0px at " + x + "px " + y + "px)", "circle(" + r + "px at " + x + "px " + y + "px)"] },
+        { duration: 520, easing: "cubic-bezier(.2,.8,.2,1)", pseudoElement: "::view-transition-new(root)" },
+      );
+    });
+  }
+
   function wireNavbar() {
     var toggle = document.getElementById("crm-theme-toggle");
     if (toggle)
       toggle.addEventListener("click", function (e) {
         e.preventDefault();
         var next = CRM.state.theme === "dark" ? "light" : "dark";
-        CRM.setTheme(next);
-        document.documentElement.setAttribute("data-theme", next);
-        toggle.querySelector("i").className = "mdi " + (next === "dark" ? "mdi-weather-sunny" : "mdi-weather-night");
-        document.dispatchEvent(new Event("crm:theme"));
+        switchTheme(next, e.clientX, e.clientY);
       });
 
     document.addEventListener("click", function (e) {
@@ -575,8 +610,44 @@
       el.remove();
     });
     if (opts.onMount) opts.onMount(form);
+    if (opts.origin) morphFrom(el, opts.origin);
     modal.show();
     return form;
+  }
+
+  // Grows a modal's dialog out of the element that opened it (a deal card, a row).
+  function morphFrom(modalEl, origin) {
+    if (!origin || !origin.getBoundingClientRect || !modalEl.animate) return;
+    if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var from = origin.getBoundingClientRect();
+    modalEl.classList.add("crm-morph");
+    modalEl.addEventListener(
+      "show.bs.modal",
+      function () {
+        // Bootstrap fades the backdrop in before it lays out the dialog, so wait for it.
+        var tries = 0;
+        requestAnimationFrame(function grow() {
+          var dialog = modalEl.querySelector(".modal-content");
+          var to = dialog.getBoundingClientRect();
+          if (!to.width) {
+            if (++tries < 60) requestAnimationFrame(grow);
+            else modalEl.classList.add("crm-morphing");
+            return;
+          }
+          modalEl.classList.add("crm-morphing");
+          var dx = from.left + from.width / 2 - (to.left + to.width / 2);
+          var dy = from.top + from.height / 2 - (to.top + to.height / 2);
+          dialog.animate(
+            [
+              { transform: "translate(" + dx + "px," + dy + "px) scale(" + from.width / to.width + "," + from.height / to.height + ")", opacity: 0.35, borderRadius: "14px" },
+              { transform: "none", opacity: 1, borderRadius: "10px" },
+            ],
+            { duration: 420, easing: "cubic-bezier(.2,.85,.25,1)" },
+          );
+        });
+      },
+      { once: true },
+    );
   }
 
   // In-page confirmation (browser confirm()/prompt() dialogs are blocked in some embeds).
@@ -653,6 +724,7 @@
       return { value: s.id, label: s.name };
     });
     formModal({
+      origin: defaults.origin,
       title: deal ? "Edit deal" : "New deal",
       submit: deal ? "Save deal" : "Create deal",
       fields: [
@@ -784,19 +856,38 @@
     });
   }
 
-  function toast(msg, tone) {
+  // Dark pill toast at the bottom; opts.action + opts.onAction add a button such as Undo.
+  function toast(msg, tone, opts) {
+    opts = opts || {};
     var box = document.getElementById("crm-toasts");
     if (!box) return;
     var el = document.createElement("div");
     el.className = "crm-toast crm-toast-" + (tone || "success");
-    el.innerHTML = '<i class="mdi ' + (tone === "warning" ? "mdi-alert-outline" : "mdi-check-circle-outline") + '"></i><span>' + esc(msg) + "</span>";
+    el.setAttribute("role", "status");
+    el.innerHTML =
+      '<i class="mdi ' +
+      (tone === "warning" ? "mdi-alert-outline" : "mdi-check") +
+      '"></i><span>' +
+      esc(msg) +
+      "</span>" +
+      (opts.action ? '<button type="button" class="crm-toast-action">' + esc(opts.action) + "</button>" : "");
     box.appendChild(el);
-    setTimeout(function () {
+    var gone = false;
+    function close() {
+      if (gone) return;
+      gone = true;
       el.classList.add("out");
       setTimeout(function () {
         el.remove();
-      }, 300);
-    }, 2600);
+      }, 320);
+    }
+    var btn = el.querySelector(".crm-toast-action");
+    if (btn)
+      btn.addEventListener("click", function () {
+        close();
+        opts.onAction();
+      });
+    setTimeout(close, opts.action ? 6000 : 2600);
   }
 
   function emptyState(icon, title, text, actionHtml) {
@@ -820,8 +911,29 @@
       text: css.getPropertyValue("--crm-text-2").trim() || "#6c7293",
       grid: css.getPropertyValue("--crm-grid").trim() || "rgba(0,0,0,.06)",
       primary: css.getPropertyValue("--crm-primary").trim() || "#b66dff",
+      surface: css.getPropertyValue("--crm-panel").trim() || "#fff",
     };
   }
+
+  // Chart.js plugin: a vertical guide line under the hovered month.
+  var crosshair = {
+    afterDatasetsDraw: function (chart) {
+      var active = chart.tooltip && chart.tooltip._active;
+      if (!active || !active.length) return;
+      var x = active[0]._view.x;
+      var area = chart.chartArea;
+      var c = chart.ctx;
+      c.save();
+      c.beginPath();
+      c.moveTo(x, area.top);
+      c.lineTo(x, area.bottom);
+      c.lineWidth = 1;
+      c.strokeStyle = chartTheme().grid.replace(/[\d.]+\)$/, "0.35)");
+      c.setLineDash([3, 3]);
+      c.stroke();
+      c.restore();
+    },
+  };
 
   function downloadFile(name, text, type) {
     var blob = new Blob([text], { type: type || "text/plain" });
@@ -840,11 +952,14 @@
     APP_NAME: APP_NAME,
     esc: esc,
     money: money,
+    count: count,
+    switchTheme: switchTheme,
     date: date,
     time: time,
     ago: ago,
     cap: cap,
     qs: qs,
+    go: go,
     initials: initials,
     avatar: avatar,
     companyLogo: companyLogo,
@@ -861,6 +976,7 @@
     toast: toast,
     emptyState: emptyState,
     chartTheme: chartTheme,
+    crosshair: crosshair,
     downloadFile: downloadFile,
     renderNotifications: renderNotifications,
   };
