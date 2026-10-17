@@ -1,0 +1,24 @@
+            <div class="page-header">
+              <h3 class="page-title">
+                <span class="page-title-icon bg-gradient-primary text-white me-2"><i class="mdi mdi-file-document-outline"></i></span> Invoices
+              </h3>
+              <div class="crm-actions">
+                <button class="btn btn-gradient-primary" id="new-invoice"><i class="mdi mdi-plus"></i> New invoice</button>
+              </div>
+            </div>
+            <div class="row" id="inv-stats"></div>
+            <div class="card">
+              <div class="card-body">
+                <div class="crm-filters mb-3">
+                  <div class="crm-seg" id="f-status">
+                    <button data-s="" class="active">All</button>
+                    <button data-s="draft">Draft</button>
+                    <button data-s="sent">Sent</button>
+                    <button data-s="overdue">Overdue</button>
+                    <button data-s="paid">Paid</button>
+                  </div>
+                  <input class="form-control ms-auto" id="f-text" type="search" placeholder="Search number or customer">
+                </div>
+                <div class="table-responsive" id="inv-table"></div>
+              </div>
+            </div>

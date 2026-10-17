@@ -1,0 +1,57 @@
+            <div class="page-header">
+              <h3 class="page-title">
+                <span class="page-title-icon bg-gradient-primary text-white me-2"><i class="mdi mdi-settings"></i></span> Settings
+              </h3>
+            </div>
+            <div class="row">
+              <div class="col-lg-6 grid-margin">
+                <div class="card mb-4">
+                  <div class="card-body">
+                    <h4 class="card-title">Workspace</h4>
+                    <p class="crm-muted crm-small">Each business you work with gets its own workspace with separate customers, deals and team.</p>
+                    <form id="ws-form" class="row">
+                      <div class="col-12 mb-3"><label class="form-label" for="ws-name">Business name</label><input class="form-control" id="ws-name" name="name" required></div>
+                      <div class="col-md-6 mb-3"><label class="form-label" for="ws-currency">Currency</label><select class="form-select" id="ws-currency" name="currency"></select></div>
+                      <div class="col-md-6 mb-3"><label class="form-label" for="ws-tax">Default tax %</label><input class="form-control" id="ws-tax" name="tax" type="number" min="0" step="0.01"></div>
+                      <div class="col-12"><button class="btn btn-gradient-primary">Save workspace</button></div>
+                    </form>
+                  </div>
+                </div>
+                <div class="card mb-4">
+                  <div class="card-body">
+                    <h4 class="card-title">Appearance</h4>
+                    <div class="crm-seg" id="theme-seg">
+                      <button data-t="light"><i class="mdi mdi-weather-sunny"></i> Light (Purple)</button>
+                      <button data-t="dark"><i class="mdi mdi-weather-night"></i> Dark (Rapport)</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">All workspaces</h4>
+                    <div id="ws-list"></div>
+                    <button class="btn btn-sm btn-inverse-primary mt-3" id="ws-new"><i class="mdi mdi-plus"></i> New workspace</button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6 grid-margin">
+                <div class="card mb-4">
+                  <div class="card-body">
+                    <h4 class="card-title">Pipeline stages</h4>
+                    <p class="crm-muted crm-small">Rename stages and set how likely a deal in each stage is to close. The forecast on the Overview uses these.</p>
+                    <form id="stages-form"></form>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Your data</h4>
+                    <p class="crm-muted crm-small">Data is saved in this browser for now. Export a backup to move it to another computer.</p>
+                    <div class="d-flex flex-wrap gap-2">
+                      <button class="btn btn-light" id="export"><i class="mdi mdi-download"></i> Export backup</button>
+                      <label class="btn btn-light mb-0"><i class="mdi mdi-upload"></i> Import backup<input type="file" id="import" accept="application/json" hidden></label>
+                      <button class="btn btn-outline-danger" id="reset"><i class="mdi mdi-refresh"></i> Reset demo data</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
