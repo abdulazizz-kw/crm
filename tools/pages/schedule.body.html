@@ -1,0 +1,41 @@
+            <div class="page-header">
+              <h3 class="page-title">
+                <span class="page-title-icon bg-gradient-primary text-white me-2"><i class="mdi mdi-calendar-month-outline"></i></span> Schedule
+              </h3>
+              <div class="crm-actions">
+                <button class="btn btn-gradient-primary" id="add-event"><i class="mdi mdi-plus"></i> Add to schedule</button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xl-9 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="crm-filters mb-3">
+                      <div class="btn-group">
+                        <button class="btn btn-light" id="prev" aria-label="Previous week"><i class="mdi mdi-chevron-left"></i></button>
+                        <button class="btn btn-light" id="today">Today</button>
+                        <button class="btn btn-light" id="next" aria-label="Next week"><i class="mdi mdi-chevron-right"></i></button>
+                      </div>
+                      <h5 class="mb-0 ms-2" id="range"></h5>
+                      <select class="form-select ms-auto" id="f-member"><option value="">Whole team</option></select>
+                    </div>
+                    <div class="crm-week-wrap"><div class="crm-week" id="week"></div></div>
+                    <p class="crm-muted crm-small mt-3 mb-0">Click an empty slot to book something, or click an item to edit it.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 grid-margin">
+                <div class="card mb-4">
+                  <div class="card-body">
+                    <h4 class="card-title">Coming up</h4>
+                    <div id="agenda"></div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">This week</h4>
+                    <div id="week-stats"></div>
+                  </div>
+                </div>
+              </div>
+            </div>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Invoices · Purple CRM</title>
+    <script src="assets/crm/theme.js"></script>
+    <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/crm/crm.css">
+    <link rel="shortcut icon" href="assets/images/favicon.ico" />
+  </head>
+  <body>
+    <div class="container-scroller">
+      <div id="crm-navbar"></div>
+      <div class="container-fluid page-body-wrapper">
+        <div id="crm-sidebar"></div>
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="page-header">
+              <h3 class="page-title">
+                <span class="page-title-icon bg-gradient-primary text-white me-2"><i class="mdi mdi-file-document-outline"></i></span> Invoices
+              </h3>
+              <div class="crm-actions">
+                <button class="btn btn-gradient-primary" id="new-invoice"><i class="mdi mdi-plus"></i> New invoice</button>
+              </div>
+            </div>
+            <div class="row" id="inv-stats"></div>
+            <div class="card">
+              <div class="card-body">
+                <div class="crm-filters mb-3">
+                  <div class="crm-seg" id="f-status">
+                    <button data-s="" class="active">All</button>
+                    <button data-s="draft">Draft</button>
+                    <button data-s="sent">Sent</button>
+                    <button data-s="overdue">Overdue</button>
+                    <button data-s="paid">Paid</button>
+                  </div>
+                  <input class="form-control ms-auto" id="f-text" type="search" placeholder="Search number or customer">
+                </div>
+                <div class="table-responsive" id="inv-table"></div>
+              </div>
+            </div>
+          </div>
+          <div id="crm-footer"></div>
+        </div>
+      </div>
+    </div>
+    <script src="assets/crm/data.js"></script>
+    <script src="assets/crm/ui.js"></script>
+    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="assets/crm/invoice-form.js"></script>
+    <script src="assets/js/off-canvas.js"></script>
+    <script src="assets/js/hoverable-collapse.js"></script>
+    <script src="assets/js/misc.js"></script>
+    <script src="assets/crm/pages/invoices.js"></script>
+    <script src="assets/crm/motion.js"></script>
+  </body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Overview · Purple CRM</title>
+    <script src="assets/crm/theme.js"></script>
+    <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/crm/crm.css">
+    <link rel="shortcut icon" href="assets/images/favicon.ico" />
+  </head>
+  <body>
+    <div class="container-scroller">
+      <div id="crm-navbar"></div>
+      <div class="container-fluid page-body-wrapper">
+        <div id="crm-sidebar"></div>
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="page-header">
+              <h3 class="page-title">
+                <span class="page-title-icon bg-gradient-primary text-white me-2"><i class="mdi mdi-view-dashboard-outline"></i></span> Overview
+              </h3>
+              <div class="crm-actions">
+                <a href="pipeline.html" class="btn btn-light"><i class="mdi mdi-view-column"></i> Open pipeline</a>
+                <button class="btn btn-gradient-primary" data-crm-new-deal><i class="mdi mdi-plus"></i> New deal</button>
+              </div>
+            </div>
+            <div id="getting-started"></div>
+            <div class="row" id="stat-cards"></div>
+            <div class="row">
+              <div class="col-lg-7 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                      <div>
+                        <h4 class="card-title mb-1">Revenue won</h4>
+                        <p class="crm-muted crm-small mb-0" id="revenue-sub"></p>
+                      </div>
+                      <div class="crm-seg" id="revenue-range">
+                        <button data-months="6" class="active">6 months</button>
+                        <button data-months="12">12 months</button>
+                      </div>
+                    </div>
+                    <div style="height:290px" class="mt-4"><canvas id="revenue-chart" aria-label="Revenue won per month" role="img"></canvas></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-5 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title mb-1">Pipeline by stage</h4>
+                    <p class="crm-muted crm-small" id="forecast-sub"></p>
+                    <div id="stage-bars" class="mt-3"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-7 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <h4 class="card-title mb-0">Deals needing attention</h4>
+                      <a href="pipeline.html?filter=attention" class="crm-small">See all</a>
+                    </div>
+                    <p class="crm-muted crm-small mt-1">Open deals with no update for 2 weeks, or past their close date.</p>
+                    <div class="table-responsive" id="attention"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-5 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Recent activity</h4>
+                    <ul class="crm-timeline mt-3" id="activity"></ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Team, last 90 days</h4>
+                    <div id="leaderboard"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card bg-gradient-primary text-white">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <h4 class="card-title text-white mb-0">Today</h4>
+                      <a href="schedule.html" class="text-white crm-small">Full schedule</a>
+                    </div>
+                    <div id="today" class="mt-3"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="crm-footer"></div>
+        </div>
+      </div>
+    </div>
+    <script src="assets/crm/data.js"></script>
+    <script src="assets/crm/ui.js"></script>
+    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="assets/vendors/chart.js/Chart.min.js"></script>
+    <script src="assets/js/off-canvas.js"></script>
+    <script src="assets/js/hoverable-collapse.js"></script>
+    <script src="assets/js/misc.js"></script>
+    <script src="assets/crm/pages/index.js"></script>
+    <script src="assets/crm/motion.js"></script>
+  </body>
+</html>

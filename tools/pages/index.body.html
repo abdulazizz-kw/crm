@@ -1,0 +1,82 @@
+            <div class="page-header">
+              <h3 class="page-title">
+                <span class="page-title-icon bg-gradient-primary text-white me-2"><i class="mdi mdi-view-dashboard-outline"></i></span> Overview
+              </h3>
+              <div class="crm-actions">
+                <a href="pipeline.html" class="btn btn-light"><i class="mdi mdi-view-column"></i> Open pipeline</a>
+                <button class="btn btn-gradient-primary" data-crm-new-deal><i class="mdi mdi-plus"></i> New deal</button>
+              </div>
+            </div>
+            <div id="getting-started"></div>
+            <div class="row" id="stat-cards"></div>
+            <div class="row">
+              <div class="col-lg-7 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                      <div>
+                        <h4 class="card-title mb-1">Revenue won</h4>
+                        <p class="crm-muted crm-small mb-0" id="revenue-sub"></p>
+                      </div>
+                      <div class="crm-seg" id="revenue-range">
+                        <button data-months="6" class="active">6 months</button>
+                        <button data-months="12">12 months</button>
+                      </div>
+                    </div>
+                    <div style="height:290px" class="mt-4"><canvas id="revenue-chart" aria-label="Revenue won per month" role="img"></canvas></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-5 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title mb-1">Pipeline by stage</h4>
+                    <p class="crm-muted crm-small" id="forecast-sub"></p>
+                    <div id="stage-bars" class="mt-3"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-7 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <h4 class="card-title mb-0">Deals needing attention</h4>
+                      <a href="pipeline.html?filter=attention" class="crm-small">See all</a>
+                    </div>
+                    <p class="crm-muted crm-small mt-1">Open deals with no update for 2 weeks, or past their close date.</p>
+                    <div class="table-responsive" id="attention"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-5 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Recent activity</h4>
+                    <ul class="crm-timeline mt-3" id="activity"></ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Team, last 90 days</h4>
+                    <div id="leaderboard"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card bg-gradient-primary text-white">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <h4 class="card-title text-white mb-0">Today</h4>
+                      <a href="schedule.html" class="text-white crm-small">Full schedule</a>
+                    </div>
+                    <div id="today" class="mt-3"></div>
+                  </div>
+                </div>
+              </div>
+            </div>

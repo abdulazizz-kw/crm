@@ -1,0 +1,31 @@
+            <div class="page-header">
+              <h3 class="page-title">
+                <span class="page-title-icon bg-gradient-primary text-white me-2"><i class="mdi mdi-account-group-outline"></i></span> Customers
+              </h3>
+              <div class="crm-actions">
+                <button class="btn btn-light" id="export-csv"><i class="mdi mdi-download"></i> Export CSV</button>
+                <button class="btn btn-gradient-primary" id="add-customer"><i class="mdi mdi-plus"></i> Add customer</button>
+              </div>
+            </div>
+            <div class="row" id="cust-stats"></div>
+            <div class="card">
+              <div class="card-body">
+                <div class="crm-filters mb-3">
+                  <input class="form-control" id="f-text" type="search" placeholder="Search name, industry, city, contact">
+                  <select class="form-select" id="f-status">
+                    <option value="">All statuses</option>
+                    <option value="active">Active</option>
+                    <option value="lead">Lead</option>
+                    <option value="churned">Churned</option>
+                  </select>
+                  <select class="form-select" id="f-owner"><option value="">All owners</option></select>
+                  <select class="form-select" id="f-sort">
+                    <option value="name">Sort: Name</option>
+                    <option value="value">Sort: Lifetime value</option>
+                    <option value="open">Sort: Open deals</option>
+                    <option value="recent">Sort: Recently active</option>
+                  </select>
+                </div>
+                <div class="table-responsive" id="cust-table"></div>
+              </div>
+            </div>

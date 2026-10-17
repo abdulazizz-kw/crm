@@ -1,0 +1,23 @@
+            <div class="page-header">
+              <h3 class="page-title">
+                <span class="page-title-icon bg-gradient-primary text-white me-2"><i class="mdi mdi-view-column"></i></span> Pipeline
+                <small class="crm-muted crm-small ms-2" id="pipe-total"></small>
+              </h3>
+              <div class="crm-actions">
+                <button class="btn btn-gradient-primary" data-crm-new-deal><i class="mdi mdi-plus"></i> New deal</button>
+              </div>
+            </div>
+            <div class="card mb-4">
+              <div class="card-body py-3">
+                <div class="crm-filters">
+                  <input class="form-control" id="f-text" type="search" placeholder="Filter by deal or customer">
+                  <select class="form-select" id="f-owner"><option value="">Everyone's deals</option></select>
+                  <div class="crm-seg" id="f-view">
+                    <button data-v="all" class="active">All deals</button>
+                    <button data-v="attention">Needs attention</button>
+                  </div>
+                  <span class="crm-muted crm-small ms-auto d-none d-md-inline"><i class="mdi mdi-drag"></i> Drag cards between stages</span>
+                </div>
+              </div>
+            </div>
+            <div class="crm-board" id="board"></div>

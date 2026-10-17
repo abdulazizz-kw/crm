@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Customers · Purple CRM</title>
+    <script src="assets/crm/theme.js"></script>
+    <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/crm/crm.css">
+    <link rel="shortcut icon" href="assets/images/favicon.ico" />
+  </head>
+  <body>
+    <div class="container-scroller">
+      <div id="crm-navbar"></div>
+      <div class="container-fluid page-body-wrapper">
+        <div id="crm-sidebar"></div>
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="page-header">
+              <h3 class="page-title">
+                <span class="page-title-icon bg-gradient-primary text-white me-2"><i class="mdi mdi-account-group-outline"></i></span> Customers
+              </h3>
+              <div class="crm-actions">
+                <button class="btn btn-light" id="export-csv"><i class="mdi mdi-download"></i> Export CSV</button>
+                <button class="btn btn-gradient-primary" id="add-customer"><i class="mdi mdi-plus"></i> Add customer</button>
+              </div>
+            </div>
+            <div class="row" id="cust-stats"></div>
+            <div class="card">
+              <div class="card-body">
+                <div class="crm-filters mb-3">
+                  <input class="form-control" id="f-text" type="search" placeholder="Search name, industry, city, contact">
+                  <select class="form-select" id="f-status">
+                    <option value="">All statuses</option>
+                    <option value="active">Active</option>
+                    <option value="lead">Lead</option>
+                    <option value="churned">Churned</option>
+                  </select>
+                  <select class="form-select" id="f-owner"><option value="">All owners</option></select>
+                  <select class="form-select" id="f-sort">
+                    <option value="name">Sort: Name</option>
+                    <option value="value">Sort: Lifetime value</option>
+                    <option value="open">Sort: Open deals</option>
+                    <option value="recent">Sort: Recently active</option>
+                  </select>
+                </div>
+                <div class="table-responsive" id="cust-table"></div>
+              </div>
+            </div>
+          </div>
+          <div id="crm-footer"></div>
+        </div>
+      </div>
+    </div>
+    <script src="assets/crm/data.js"></script>
+    <script src="assets/crm/ui.js"></script>
+    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="assets/js/off-canvas.js"></script>
+    <script src="assets/js/hoverable-collapse.js"></script>
+    <script src="assets/js/misc.js"></script>
+    <script src="assets/crm/pages/customers.js"></script>
+    <script src="assets/crm/motion.js"></script>
+  </body>
+</html>
